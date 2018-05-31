@@ -17,12 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Basket {
-
     protected long id;
     protected LocalDateTime time;
     protected long clientId;
-    protected List<Long> purchaseId;
-    protected Long posId;
-    protected long charge;
+    protected double charge;
     protected String paymentMethod;
+    protected Long posId;
 }

@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Product {
+    protected long id;
     protected String name;
     protected String category;
     protected String department;
     protected String type;
     protected String brand;
-    protected long profit;
+    protected double profit;
 }

@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Purchase {
-    protected Product product;
-    protected Basket basket;
-    protected long price;
-    protected long units;
+    protected long productId;
+    protected long basketId;
+    protected double price;
+    protected int units;
     //Contexto de la compra: promoción, descuentos, navidades
     protected String context;
 }

@@ -15,8 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Client {
-    protected List<Basket> purchases;
     protected String sex;
     protected int age;
-    protected String ocuppation;
+    protected String ocupation;
 }

@@ -17,5 +17,5 @@ import java.util.List;
 public class PointOfSale {
     protected String name;
     protected String location;
-    protected List<Basket> baskets;
+    protected long id;
 }
