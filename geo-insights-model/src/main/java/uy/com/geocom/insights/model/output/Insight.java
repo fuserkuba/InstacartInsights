@@ -1,19 +1,19 @@
-package uy.com.geocom.insights.model;
+package uy.com.geocom.insights.model.output;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * Analysis result
  */
-//TODO: Incorporar las anotaciones lombok que correspondan
 public abstract class Insight {
-    protected String datasetId;
-    protected Map<String,Object> params;
+    protected List<String> datasetIds;
+    protected Map<String,String> params;
     // Textual description
     protected String description;
 }

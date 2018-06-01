@@ -1,4 +1,4 @@
-package uy.com.geocom.insights.model;
+package uy.com.geocom.insights.model.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

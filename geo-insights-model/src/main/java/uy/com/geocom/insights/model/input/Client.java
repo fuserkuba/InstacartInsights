@@ -1,4 +1,4 @@
-package uy.com.geocom.insights.model;
+package uy.com.geocom.insights.model.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Client {
-    protected long id;
+    protected String id;
     protected String sex;
-    protected int age;
-    protected String occupation;
+    protected Integer age;
+    protected String locality;
 }

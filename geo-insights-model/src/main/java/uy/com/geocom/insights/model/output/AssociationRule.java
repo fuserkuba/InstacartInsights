@@ -1,4 +1,4 @@
-package uy.com.geocom.insights.model;
+package uy.com.geocom.insights.model.output;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +12,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class AssociationRule {
+    protected Long rank;
     protected Set<Long> antecedentItemIds;
-    protected long consequentItemId;
-    protected double confidence;
+    protected Long consequentItemId;
+    protected Double confidence;
     //Combination of confidence with another context attribute. e.g. profit
-    protected double relevance;
+    protected Double relevance;
+
 }

@@ -1,4 +1,4 @@
-package uy.com.geocom.insights.model;
+package uy.com.geocom.insights.model.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Product {
-    protected long id;
+    protected String id;
     protected String name;
     protected String category;
     protected String department;
     protected String type;
     protected String brand;
-    protected double profit;
+    protected Double profit;
 }
