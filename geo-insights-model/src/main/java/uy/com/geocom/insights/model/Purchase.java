@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Purchase {
-    protected long productId;
+    protected long id;
     protected long basketId;
     protected double price;
     protected int units;

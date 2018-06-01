@@ -5,17 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-/**
- * Lugar donde se registró la venta
- */
+import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PointOfSale {
-    protected long id;
-    protected String name;
-    protected String location;
+public class FrequentItemSet {
+    protected Set<Long> itemIds;
+    protected double support;
 }
