@@ -1,4 +1,4 @@
-package uy.com.geocom.insights.model;
+package uy.com.geocom.insights.model.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Purchase {
-    protected Product product;
-    protected Basket basket;
-    protected long price;
-    protected long units;
+    protected String productId;
+    protected String basketId;
+    protected Double price;
+    protected Integer units;
     //Contexto de la compra: promoción, descuentos, navidades
     protected String context;
 }
