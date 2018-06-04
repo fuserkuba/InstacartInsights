@@ -1,22 +1,19 @@
 package uy.com.geocom;
+
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+
 /**
  * Hello world!
- *
  */
-public class ETLInputData
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+public class ETLInputData {
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
     }
 
 
-    private static void etl_instacart_to_geo_insight(String dataPath){
-        /*Dataset<Row> baskets = readDataSet(dataPath.concat(ORDERS_PRODUCTS_TRAIN)).union(dsOrdersProductsTrain).withColumnRenamed("order_id", "order");
-        baskets=baskets.withColumnRenamed("basketId","id");
-
-
-        Dataset<Row> products=dsProducts;*/
+    private static void etl_instacart_to_geo_insight(String dataPath) {
+        Dataset<Row> baskets;
 
     }
 }
