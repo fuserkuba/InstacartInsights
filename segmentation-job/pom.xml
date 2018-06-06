@@ -39,6 +39,11 @@
             <artifactId>geo-insights-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>uy.com.geocom</groupId>
+            <artifactId>geo-jobs-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

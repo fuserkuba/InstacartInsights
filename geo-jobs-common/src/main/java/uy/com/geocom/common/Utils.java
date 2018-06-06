@@ -1,4 +1,4 @@
-package uy.com.geocom.insights.model;
+package uy.com.geocom.common;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
