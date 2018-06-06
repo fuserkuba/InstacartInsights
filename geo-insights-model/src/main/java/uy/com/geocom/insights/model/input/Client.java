@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 import uy.com.geocom.insights.model.output.SegmentItem;
 
 import java.util.HashMap;
@@ -30,5 +33,14 @@ public class Client  implements SegmentItem {
         features.put("age",age.toString());
         features.put("locality",locality);
         return features;
+    }
+
+    public static StructType getSchema(){
+        return DataTypes.createStructType(new StructField[]{
+                DataTypes.createStructField("id", DataTypes.StringType, false),
+                DataTypes.createStructField("sex", DataTypes.StringType, true),
+                DataTypes.createStructField("age", DataTypes.IntegerType, true),
+                DataTypes.createStructField("locality", DataTypes.StringType, true),
+        });
     }
 }
