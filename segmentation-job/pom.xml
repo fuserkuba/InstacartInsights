@@ -35,6 +35,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_2.11</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
             <groupId>uy.com.geocom</groupId>
             <artifactId>geo-insights-model</artifactId>
             <version>1.0-SNAPSHOT</version>
