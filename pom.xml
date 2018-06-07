@@ -7,9 +7,14 @@
     <modules>
         <module>geo-insights-model</module>
         <module>segmentation-job</module>
+        <module>etl-job</module>
     </modules>
     <packaging>pom</packaging>
     <name>geo-insights-pom</name>
+
+    <properties>
+        <spark.version>2.3.0</spark.version>
+    </properties>
 
     <build>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
