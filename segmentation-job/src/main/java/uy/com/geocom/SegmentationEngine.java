@@ -22,7 +22,9 @@ import uy.com.geocom.insights.model.input.Product;
 import uy.com.geocom.insights.model.input.Purchase;
 import uy.com.geocom.insights.model.output.Segmentation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.spark.sql.functions.col;
@@ -49,7 +51,7 @@ public class SegmentationEngine
         //ETL
         DataTransfomer dataTransfomer= extractDataSets(args);
         //Prepare segmentation
-        String[] features = RFMSchema.getSchema().fieldNames();
+        String[] features = RFMSchema.getDataColumns();
         int[] k_values=new int[]{10, 9, 8, 7, 6, 5, 4, 3};
         //Create clustergins
         Dataset<Row> clusteredDataset=segmentDataset(dataTransfomer.getClientsRFM(),features, k_values);
@@ -81,9 +83,6 @@ public class SegmentationEngine
                 .as(Encoders.bean(Client.class));
         //describe data sets
         Utils.describeDataSet(basketDataset,"Baskets",10);
-        //Utils.describeDataSet(productDataset,"Products",10);
-        //Utils.describeDataSet(purchaseDataset,"Purchases",10);
-        //Utils.describeDataSet(clientDataset,"Clients",10);
 
         //Transform input datasets
         DataTransfomer dataTransfomer=new DataTransfomer();
@@ -92,22 +91,26 @@ public class SegmentationEngine
     }
 
 
-    private static Dataset<Row> segmentDataset(Dataset<Row> items, String[] features, int[] k_values) {
+    private static Dataset<Row> segmentDataset(Dataset<Row> items, String[] inputCols, int[] k_values) {
 
-        Utils.describeDataSet(items,"Items for clutering",10);
+        Utils.describeDataSet(items,"Items for clustering",10);
 
-        //Remove first fields (expet to be "id")
-        String[]inputCols= (String[]) ArrayUtils.remove(items.schema().fieldNames(),0);
+
+        ArrayList<String> features= new ArrayList<String>(inputCols.length);
+        for(String cols:inputCols){
+             features.add(cols.concat("_Discretized"));
+        }
+        String[] featuresTransformed= features.toArray(new String[0]);
 
         //Features transformation
         QuantileDiscretizer discretizer = new QuantileDiscretizer()
                 .setInputCols(inputCols)
-                .setOutputCols(features)
+                .setOutputCols(featuresTransformed)
                 .setNumBucketsArray(new int[]{10, 10, 10});
 
         //Select Features
         VectorAssembler assembler = new VectorAssembler()
-                .setInputCols(features)
+                .setInputCols(featuresTransformed)
                 .setOutputCol("features");
 
         //Set Kmeans

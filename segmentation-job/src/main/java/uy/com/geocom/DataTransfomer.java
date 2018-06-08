@@ -14,7 +14,7 @@ public class DataTransfomer {
 
     public Dataset<Row> calculateClientsRFM(Dataset<Basket> basketDataset) {
 
-        clientsRFM = basketDataset.groupBy(col(BasketSchema.clientId.name()).alias(ClientSchema.id.name()))
+        clientsRFM = basketDataset.groupBy(col(BasketSchema.clientId.name()).alias(RFMSchema.clientId.name()))
                 .agg(max(col(BasketSchema.time.name())).as("last"),     //Date of last purchased basket
                         count(BasketSchema.id.name()).as(RFMSchema.frequency.name()),     //Number of baskets for Frequency
                         sum(BasketSchema.charge.name()).as(RFMSchema.monetary.name()))   //Sum of charges for Monetary
@@ -25,7 +25,6 @@ public class DataTransfomer {
     }
 
     public Dataset<Row> getClientsRFM() {
-
         return clientsRFM;
     }
 }
