@@ -47,9 +47,9 @@ public class SegmentationEngine
         //only error logs
         spark.sparkContext().setLogLevel("ERROR");
         //ETL
-        DataTransfomer dataTransfomer=readDataSets(args);
+        DataTransfomer dataTransfomer= extractDataSets(args);
         //Prepare segmentation
-        String[] features = new String[]{"recency", "frequency", "monetary"};
+        String[] features = RFMSchema.getSchema().fieldNames();
         int[] k_values=new int[]{10, 9, 8, 7, 6, 5, 4, 3};
         //Create clustergins
         Dataset<Row> clusteredDataset=segmentDataset(dataTransfomer.getClientsRFM(),features, k_values);
@@ -63,7 +63,7 @@ public class SegmentationEngine
         //TODO: write Segmentation to files
 
     }
-    private static DataTransfomer readDataSets(String[] paths){
+    private static DataTransfomer extractDataSets(String[] paths){
         String basketsPath = paths[0];
         String productsPath = paths[1];
         String purchasesPath = paths[2];
@@ -81,20 +81,24 @@ public class SegmentationEngine
                 .as(Encoders.bean(Client.class));
         //describe data sets
         Utils.describeDataSet(basketDataset,"Baskets",10);
-        Utils.describeDataSet(productDataset,"Products",10);
-        Utils.describeDataSet(purchaseDataset,"Purchases",10);
-        Utils.describeDataSet(clientDataset,"Clients",10);
+        //Utils.describeDataSet(productDataset,"Products",10);
+        //Utils.describeDataSet(purchaseDataset,"Purchases",10);
+        //Utils.describeDataSet(clientDataset,"Clients",10);
 
         //Transform input datasets
         DataTransfomer dataTransfomer=new DataTransfomer();
-        dataTransfomer.calculateClientsRFM(clientDataset,basketDataset,purchaseDataset);
+        dataTransfomer.calculateClientsRFM(basketDataset);
         return dataTransfomer;
     }
 
 
     private static Dataset<Row> segmentDataset(Dataset<Row> items, String[] features, int[] k_values) {
-        //Remove first fields (except to be "id")
+
+        Utils.describeDataSet(items,"Items for clutering",10);
+
+        //Remove first fields (expet to be "id")
         String[]inputCols= (String[]) ArrayUtils.remove(items.schema().fieldNames(),0);
+
         //Features transformation
         QuantileDiscretizer discretizer = new QuantileDiscretizer()
                 .setInputCols(inputCols)
