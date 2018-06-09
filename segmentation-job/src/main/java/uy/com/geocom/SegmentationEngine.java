@@ -23,8 +23,8 @@ import uy.com.geocom.insights.model.input.Purchase;
 import uy.com.geocom.insights.model.output.Segmentation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.apache.spark.sql.functions.col;
@@ -38,11 +38,14 @@ public class SegmentationEngine
 {
     protected static SparkSession spark;
     protected static Map<String,String> params=new HashMap<String, String>();
+    protected final static int basketsPathArgsIndex=0;
+    protected final static int clientsPathArgsIndex=1;
+    protected final static int segmentsPathArgsIndex=2;
 
     public static void main( String[] args )
     {
-        if (args.length < 5) {
-            System.err.println("Usage: SegmentationEngine <fileBaskets fileProducts filePurchases fileClients filePOS>");
+        if (args.length < 3) {
+            System.err.println("Usage: SegmentationEngine <fileBaskets fileClients segmentationPath>");
             System.exit(1);
         }
         spark = SparkSession.builder().appName("SegmentationEngine").getOrCreate();
@@ -53,36 +56,29 @@ public class SegmentationEngine
         //Prepare segmentation
         String[] features = RFMSchema.getDataColumns();
         int[] k_values=new int[]{10, 9, 8, 7, 6, 5, 4, 3};
-        //Create clustergins
-        Dataset<Row> clusteredDataset=segmentDataset(dataTransfomer.getClientsRFM(),features, k_values);
-        Utils.describeDataSet(clusteredDataset,"Clients segmented",10);
+        //Create clusters
+        SegmentationCreator segmentationCreator= clusterDataset(dataTransfomer.getClientsRFM(),features, k_values);
+        //Utils.describeDataSet(spark.log(), clusteredDataset,"Clients segmented",10);
         //Prepare result
         params.put("features",ArrayUtils.toString(features));
         params.put("k_values",ArrayUtils.toString(k_values));
-        SegmentationCreator segmentationCreator=new SegmentationCreator();
-        segmentationCreator.createSegmentationInsightFromClustering(params,args);
-        Segmentation segmentation=segmentationCreator.getSegmentationInsight();
+
+        Segmentation segmentation=segmentationCreator.createSegmentationInsightFromClustering(params,args);
+
         //TODO: write Segmentation to files
 
     }
     private static DataTransfomer extractDataSets(String[] paths){
-        String basketsPath = paths[0];
-        String productsPath = paths[1];
-        String purchasesPath = paths[2];
-        String clientsPath = paths[3];
-        String posPath = paths[4];
+        String basketsPath = paths[basketsPathArgsIndex];
+        String clientsPath = paths[clientsPathArgsIndex];
         //read data sets
 
         Dataset<Basket> basketDataset=Utils.readDataSetFromFile(spark, basketsPath,BasketSchema.getSchema())
                 .as(Encoders.bean(Basket.class));
-        Dataset<Product> productDataset=Utils.readDataSetFromFile(spark, productsPath,ProductSchema.getSchema())
-                .as(Encoders.bean(Product.class));
-        Dataset<Purchase> purchaseDataset=Utils.readDataSetFromFile(spark, purchasesPath,PurchaseSchema.getSchema())
-                .as(Encoders.bean(Purchase.class));
         Dataset<Client> clientDataset=Utils.readDataSetFromFile(spark, clientsPath, ClientSchema.getSchema())
                 .as(Encoders.bean(Client.class));
         //describe data sets
-        Utils.describeDataSet(basketDataset,"Baskets",10);
+        Utils.describeDataSet(spark.log(),basketDataset,"Baskets",10);
 
         //Transform input datasets
         DataTransfomer dataTransfomer=new DataTransfomer();
@@ -91,9 +87,9 @@ public class SegmentationEngine
     }
 
 
-    private static Dataset<Row> segmentDataset(Dataset<Row> items, String[] inputCols, int[] k_values) {
+    private static SegmentationCreator clusterDataset(Dataset<Row> items, String[] inputCols, int[] k_values) {
 
-        Utils.describeDataSet(items,"Items for clustering",10);
+        Utils.describeDataSet(spark.log(),items,"Items for clustering",10);
 
 
         ArrayList<String> features= new ArrayList<String>(inputCols.length);
@@ -118,9 +114,6 @@ public class SegmentationEngine
         //Prepare pipeline
         Pipeline pipeline = new Pipeline()
                 .setStages(new PipelineStage[]{discretizer, assembler, kMeans});
-
-        // Evaluate clustering by computing Silhouette score
-        ClusteringEvaluator evaluator = new ClusteringEvaluator();
 
         ParamMap[] paramGrid = new ParamGridBuilder()
                 .addGrid(kMeans.k(), k_values)
@@ -147,23 +140,12 @@ public class SegmentationEngine
         for (Vector center : centers) {
             System.out.println(center);
         }
-        System.out.println("CrossValidator Clustered data");
-        crossValidatorPredictions.printSchema();
-        crossValidatorPredictions.groupBy("prediction").count().orderBy(desc("count")).show();
 
-        double silhouette = evaluator.evaluate(crossValidatorPredictions);
-        System.out.println("CrossValidator: Silhouette with squared euclidean distance = " + silhouette);
-
-        //Describe segments
-        //TODO Eliminar después de preparar la salida
-        for (int i = 0; i < bestKMeans.getK(); i++) {
-            System.out.println("------------".concat("Cluster (" + i + ") ------------"));
-            crossValidatorPredictions.drop("features")
-                    .filter(col("prediction").equalTo(i))
-                    .summary().show();
-        }
-
-        return crossValidatorPredictions.withColumnRenamed("prediction", "segment");
+        return SegmentationCreator.builder()
+                .clusteredDataset(crossValidatorPredictions)
+                .clusteringModel(bestKMeans)
+                .features(Arrays.asList(inputCols))
+                .build();
     }
 
 }

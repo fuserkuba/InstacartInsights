@@ -4,6 +4,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.StructType;
+import org.slf4j.Logger;
 
 public class Utils {
 
@@ -23,9 +24,9 @@ public class Utils {
             return spark.read().option("sep", "t").csv(dataPath);
     }
 
-    public static void describeDataSet(Dataset dataset, String title, int rows) {
+    public static void describeDataSet(Logger logger, Dataset dataset, String title, int rows) {
         //display schema of data
-        System.out.println("------------".concat(title + " (").concat(dataset.count() + " rows) ------------"));
+        logger.info("------------".concat(title + " (").concat(dataset.count() + " rows) ------------"));
         dataset.printSchema();
         dataset.show(rows);
     }

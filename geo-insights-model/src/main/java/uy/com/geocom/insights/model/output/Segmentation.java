@@ -1,10 +1,8 @@
 package uy.com.geocom.insights.model.output;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -35,22 +33,23 @@ public class Segmentation extends Insight {
      *
      *  where `$x_{j}$` is the `j`-th dimension of the point `X` and `$c_{ij}$` is the `j`-th dimension
      *  of the `i`-th point in cluster `$\Gamma$`.
-     */
-    protected double silhouetteCosineValue;
-    /**
+     *
      * SquaredEuclideanSilhouette computes the average of the Silhouette over all the data of the dataset, which is
-     *  a measure of how appropriately the data have been clustered.
-     *
-     *  The Silhouette for each point `i` is defined as:
-     *
-     *  <blockquote>
-     *     $$
-     *     s_{i} = \frac{b_{i}-a_{i}}{max\{a_{i},b_{i}\}}
-     *     $$
-     *   </blockquote>
+     *      *  a measure of how appropriately the data have been clustered.
+     *      *
+     *      *  The Silhouette for each point `i` is defined as:
+     *      *
+     *      *  <blockquote>
+     *      *     $$
+     *      *     s_{i} = \frac{b_{i}-a_{i}}{max\{a_{i},b_{i}\}}
+     *      *     $$
+     *      *   </blockquote>
      */
-    protected double silhouetteSquaredEuclideanValue;
+    protected double silhouetteValue;
     //Within Set Sum of Squared Errors
     protected double wssseValue;
+
     protected Map<String,Segment> segments;
+
+    protected String segmentedDatasetPath;
 }

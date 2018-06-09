@@ -14,7 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class Segment {
-    protected List<Long> itemIds;
+    protected Long totalItems;
     /**
      * e.g.: [{"recency",[{"count",10.0},{"mean",53.3},{"stddev",53.3}]},
      *        {"frequency",[{"min",18.0},{"50%",24.3},{"max",92.3}]},
