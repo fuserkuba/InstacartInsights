@@ -1,30 +1,25 @@
+/target/
+!.mvn/wrapper/maven-wrapper.jar
 
-### Builder
-target/
-build/
-out/
-gen/
-.gradle/
-local.properties
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-### IntelliJ
-.idea/
+### IntelliJ IDEA ###
+.idea
+*.iws
 *.iml
 *.ipr
-*.iws
 
-### Eclipse
-.settings/
-.project
-.classpath
-.mymetadata
-
-### Package Files
-*.jar
-*.war
-*.ear
-
-### Other
-.DS_Store
-*.log
-*.bak
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/

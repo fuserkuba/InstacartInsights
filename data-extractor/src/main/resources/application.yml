@@ -1,0 +1,15 @@
+insights:
+  extractor:
+    path: /Users/earandap/Projects/Geocom/geo-insights-project/data-extractor
+spring:
+  batch:
+    initialize-schema: never
+  datasource:
+    url: jdbc:mysql://localhost/geopos
+    username: root
+    password: geocom
+    driver-class-name: com.mysql.jdbc.Driver
+
+logging:
+  level:
+    org.springframework.batch: INFO
