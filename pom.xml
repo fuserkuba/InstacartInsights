@@ -8,6 +8,7 @@
         <module>geo-insights-model</module>
         <module>segmentation-job</module>
         <module>etl-job</module>
+        <module>data-extractor</module>
     </modules>
     <packaging>pom</packaging>
     <name>geo-insights-pom</name>
