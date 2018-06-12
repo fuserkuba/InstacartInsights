@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import uy.com.geocom.insights.model.output.SegmentItem;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,18 +16,19 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Client  implements SegmentItem {
+public class Client implements SegmentItem {
     protected String id;
     protected String sex;
     protected Integer age;
     protected String locality;
+
     @Override
     public Map<String, String> getFeatures() {
-        Map<String, String> features=new HashMap<String, String>();
-        features.put("id",id);
-        features.put("sex",sex);
-        features.put("age",age.toString());
-        features.put("locality",locality);
+        Map<String, String> features = new HashMap<String, String>();
+        features.put("id", id);
+        features.put("sex", sex);
+        features.put("age", age.toString());
+        features.put("locality", locality);
         return features;
     }
 }

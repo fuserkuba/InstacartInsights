@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * Relación entre la cesta y el producto adquirido
- *
  */
 @Data
 @NoArgsConstructor
