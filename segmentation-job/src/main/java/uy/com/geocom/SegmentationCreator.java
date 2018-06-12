@@ -10,8 +10,6 @@ import org.apache.spark.ml.evaluation.ClusteringEvaluator;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
-import scala.collection.JavaConverters;
-import scala.collection.Seq;
 import uy.com.geocom.insights.model.output.Segment;
 import uy.com.geocom.insights.model.output.Segmentation;
 import uy.com.geocom.insights.model.output.StatisticMeasure;
@@ -34,14 +32,16 @@ public class SegmentationCreator {
     protected Dataset<Row> clusteredDataset;
     protected List<String> features;
 
-    public Segmentation createSegmentationInsightFromClustering(Map<String, String> params, String[] datasetPaths) {
+    public Segmentation createSegmentationInsightFromClustering(DataTransformer dataTransformer, Map<String, String> params, String[] datasetPaths, String segmentationPath) {
 
         segmentationInsight = new Segmentation();
         segmentationInsight.setParams(params);
         segmentationInsight.setDatasetIds(Arrays.asList(datasetPaths));
 
         // Evaluate clustering by computing Silhouette score
-        segmentationInsight.setSilhouetteValue(new ClusteringEvaluator().evaluate(clusteredDataset));
+        segmentationInsight.setSilhouetteValue(new ClusteringEvaluator()
+                .setPredictionCol(SegmentationEngine.SEGMENTS_COLUMN)
+                .evaluate(clusteredDataset));
         // Evaluate clustering by computing Within Set Sum of Squared Errors.
         if (clusteringModel instanceof KMeansModel)
             segmentationInsight.setWssseValue(((KMeansModel) clusteringModel).computeCost(clusteredDataset));
@@ -49,47 +49,72 @@ public class SegmentationCreator {
             segmentationInsight.setWssseValue(0);
 
         //Get segments
-        String segmentColumn = "prediction";
-        //
         clusteredDataset.printSchema();
-        clusteredDataset.groupBy(segmentColumn).count().orderBy(desc("count")).show();
+        clusteredDataset.groupBy(SegmentationEngine.SEGMENTS_COLUMN).count().orderBy(desc("count")).show();
         //
-        List<String> segmentsNames = clusteredDataset.groupBy(segmentColumn).count()
-                .select(segmentColumn)
+        List<String> segmentsNames = clusteredDataset.groupBy(SegmentationEngine.SEGMENTS_COLUMN).count()
+                .select(SegmentationEngine.SEGMENTS_COLUMN)
                 .as(Encoders.STRING())
                 .collectAsList();
-        //Features names as Scala Seq
-        Seq<String> featuresTailNames=JavaConverters
-                .asScalaIteratorConverter(features.subList(1,features.size())
-                        .iterator())
-                .asScala().toSeq();
-        Map<String,Segment> segments=new HashMap<String, Segment>();
+        Map<String, Segment> segments = new HashMap<String, Segment>();
         for (String segmentName : segmentsNames) {
-            Segment segment = buildSegment(segmentName,
-                    clusteredDataset.where(col(segmentColumn)
+            Segment segment = buildSegment(clusteredDataset
+                    .where(col(SegmentationEngine.SEGMENTS_COLUMN)
                             .equalTo(segmentName))
-                            .select(features.get(0),featuresTailNames)
-                            .summary());
-            segments.put(segmentName,segment);
+                    .summary(), dataTransformer);
+            segments.put(segmentName, segment);
         }
+        segmentationInsight.setSegments(segments);
+        segmentationInsight.setSegmentedDatasetPath(segmentationPath);
 
-        //TODO: obtener resultados y transformarlos al formato de Segmentation
         return segmentationInsight;
     }
 
-    protected Segment buildSegment(String segmentName, Dataset<Row> segmentSummary) {
-        final String summaryColumn="summary";
-        Map<String,Map<StatisticMeasure,Double>> statisticsValuesByFeature=new HashMap<String, Map<StatisticMeasure, Double>>();
-        segmentSummary.show(20);
-        for(String feature:features){
-            Map<StatisticMeasure,Double> statisticsValues=new HashMap<>();
-            statisticsValues.put(StatisticMeasure.count,0.0);
-            segmentSummary.where(col(summaryColumn).equalTo(StatisticMeasure.count.name()))
-                    .select(feature).as(Encoders.STRING());
+    protected Segment buildSegment(Dataset<Row> segmentSummary, DataTransformer dataTransformer) {
+
+        Map<String, Map<StatisticMeasure, Double>> statisticsValuesByFeature = new HashMap<String, Map<StatisticMeasure, Double>>();
+        Double count=0.0;
+
+        for (String feature : features) {
+
+            Map<StatisticMeasure, Double> statisticsValues = new HashMap<>();
+            //All values
+            List<Row> statistics = segmentSummary.select(feature).collectAsList();
+            //Count
+            count = Double.parseDouble(statistics.get(0).getString(0));
+            statisticsValues.put(StatisticMeasure.count, count);
+            //Mean
+            Double mean = Double.parseDouble(statistics.get(1).getString(0));
+            statisticsValues.put(StatisticMeasure.mean, mean);
+            //StdDev
+            Double stdDev = Double.parseDouble(statistics.get(2).getString(0));
+            statisticsValues.put(StatisticMeasure.stdDev, stdDev);
+            //Min
+            Double min = Double.parseDouble(statistics.get(3).getString(0));
+            statisticsValues.put(StatisticMeasure.min, min);
+            //lowerQuartile
+            Double lowerQuartile = Double.parseDouble(statistics.get(4).getString(0));
+            statisticsValues.put(StatisticMeasure.lowerQuartile, lowerQuartile);
+            //Median
+            Double median = Double.parseDouble(statistics.get(5).getString(0));
+            statisticsValues.put(StatisticMeasure.median, median);
+            //UpperQuartile
+            Double upperQuartile = Double.parseDouble(statistics.get(6).getString(0));
+            statisticsValues.put(StatisticMeasure.upperQuartile, upperQuartile);
+            //Max
+            Double max = Double.parseDouble(statistics.get(7).getString(0));
+            statisticsValues.put(StatisticMeasure.max, max);
+
+            statisticsValuesByFeature.put(feature, statisticsValues);
+            //
         }
+
         return Segment.builder()
-                .totalItems(segmentSummary.count())
+                .statisticsValuesByFeature(statisticsValuesByFeature)
+                .totalItems(count.longValue())
+                .typicalItem(dataTransformer.createTypicalItem(statisticsValuesByFeature))
                 .build();
     }
+
 
 }
