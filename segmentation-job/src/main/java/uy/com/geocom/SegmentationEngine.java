@@ -37,8 +37,8 @@ public class SegmentationEngine {
     protected static Map<String, String> params = new HashMap<String, String>();
 
     public static void main(String[] args) {
-        if (args.length < 3) {
-            System.err.println("Usage: SegmentationEngine <fileBaskets fileClients segmentationPath>");
+        if (args.length < 2) {
+            System.err.println("Usage: SegmentationEngine <fileBaskets segmentationPath>");
             System.exit(1);
         }
         spark = SparkSession.builder().appName("SegmentationEngine").getOrCreate();
