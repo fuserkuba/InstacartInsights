@@ -10,6 +10,7 @@
         <module>etl-job</module>
         <module>geo-jobs-common</module>
         <module>data-extractor</module>
+        <module>market-basket-analysis-job</module>
     </modules>
     <packaging>pom</packaging>
     <name>geo-insights-pom</name>
