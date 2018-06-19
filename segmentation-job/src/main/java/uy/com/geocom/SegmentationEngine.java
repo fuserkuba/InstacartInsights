@@ -1,5 +1,6 @@
 package uy.com.geocom;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.spark.ml.Pipeline;
 import org.apache.spark.ml.PipelineModel;
@@ -21,6 +22,12 @@ import uy.com.geocom.insights.model.output.Segmentation;
 import uy.com.geocom.rfm.DataTransformer4RFM;
 import uy.com.geocom.rfm.RFMSchema;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,9 +62,9 @@ public class SegmentationEngine {
         params.put("features", ArrayUtils.toString(features));
         params.put("k_values", ArrayUtils.toString(k_values));
 
-        Segmentation segmentation = segmentationCreator.createSegmentationInsightFromClustering(dataTransformer,params, args, args[segmentsPathArgsIndex]);
+        Segmentation segmentation = segmentationCreator.createSegmentationInsightFromClustering(dataTransformer, params, args, args[segmentsPathArgsIndex]);
 
-        //TODO: write Segmentation to files
+
         //Write clusters
         segmentationCreator.clusteredDataset
                 .select(BasketSchema.clientId.name(), SEGMENTS_COLUMN)
@@ -65,6 +72,14 @@ public class SegmentationEngine {
                 .write().mode(SaveMode.Overwrite)
                 .option("sep", ",").option("header", true)
                 .csv(segmentation.getSegmentedDatasetPath());
+
+        ObjectMapper mapper = new ObjectMapper();
+        try (OutputStream stream = Files.newOutputStream(Paths.get(segmentation.getSegmentedDatasetPath() + ".json"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            mapper.writeValue(stream, segmentation);
+        } catch (IOException e) {
+            spark.log().error("Error trying to write segmentation file", e);
+        }
+
     }
 
     private static DataTransformer extractDataSets(String[] paths) {
@@ -74,7 +89,7 @@ public class SegmentationEngine {
         Dataset<Basket> basketDataset = Utils.readDataSetFromFile(spark, basketsPath, BasketSchema.getSchema())
                 .as(Encoders.bean(Basket.class));
         //describe data sets
-        Utils.describeDataSet(spark.log(), basketDataset, "Baskets", 10);
+        // Utils.describeDataSet(spark.log(), basketDataset, "Baskets", 10);
         //Transform input datasets
         DataTransformer dataTransformer = new DataTransformer4RFM();
         dataTransformer.transformDataset(basketDataset);
@@ -84,7 +99,7 @@ public class SegmentationEngine {
 
     private static SegmentationCreator clusterDataset(Dataset<Row> items, String[] inputCols, int[] k_values) {
 
-        Utils.describeDataSet(spark.log(), items, "Items for clustering", 10);
+        //Utils.describeDataSet(spark.log(), items, "Items for clustering", 10);
 
         ArrayList<String> features = new ArrayList<String>(inputCols.length);
         for (String cols : inputCols) {
@@ -130,7 +145,7 @@ public class SegmentationEngine {
         //Centers
         org.apache.spark.ml.linalg.Vector[] centers = bestKMeans.clusterCenters();
         //Show
-        crossValidatorPredictions.show(20);
+        //crossValidatorPredictions.show(20);
 
         return SegmentationCreator.builder()
                 .clusteredDataset(crossValidatorPredictions)
