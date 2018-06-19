@@ -49,8 +49,8 @@ public class SegmentationCreator {
             segmentationInsight.setWssseValue(0);
 
         //Get segments
-        clusteredDataset.printSchema();
-        clusteredDataset.groupBy(SegmentationEngine.SEGMENTS_COLUMN).count().orderBy(desc("count")).show();
+        //clusteredDataset.printSchema();
+        //clusteredDataset.groupBy(SegmentationEngine.SEGMENTS_COLUMN).count().orderBy(desc("count")).show();
         //
         List<String> segmentsNames = clusteredDataset.groupBy(SegmentationEngine.SEGMENTS_COLUMN).count()
                 .select(SegmentationEngine.SEGMENTS_COLUMN)
