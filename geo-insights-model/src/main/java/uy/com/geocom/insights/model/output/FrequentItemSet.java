@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
@@ -12,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class FrequentItemSet {
+    protected LinkedHashSet<String> items;
+    protected Long freq;
     protected Long rank;
-    protected Set<Long> itemIds;
-    protected Double support;
 }

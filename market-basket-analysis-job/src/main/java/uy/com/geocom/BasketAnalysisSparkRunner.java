@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession;
 import uy.com.geocom.common.InsightsEngine;
 import uy.com.geocom.insights.model.output.Insight;
 
-public class SparkLoader {
+public class BasketAnalysisSparkRunner {
     public static void main(String[] args) {
 
         if (args.length < 5) {
