@@ -21,7 +21,7 @@ import static org.apache.spark.sql.functions.*;
 
 @Data
 @Builder
-public class BasketAnalysisCreator {
+public class BasketAnalysisBuilder {
     protected Dataset<Row> freqItemSets;
     protected Dataset<Row> associationRules;
     protected Dataset<Product> productDataset;

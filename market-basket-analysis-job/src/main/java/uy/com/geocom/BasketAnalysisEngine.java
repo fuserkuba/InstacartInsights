@@ -40,20 +40,14 @@ public class BasketAnalysisEngine implements InsightsEngine {
     protected Map<String, String> params = new LinkedHashMap<String, String>();
     protected List<String> datasetIds = new LinkedList<String>();
 
+    protected static Logger logger=Logger.getLogger(BasketAnalysisEngine.class);
 
     public BasketAnalysisEngine(SparkSession spark) {
-
         this.spark = spark;
-        //only error logs
-        this.spark.sparkContext().setLogLevel("ERROR");
-        //testing logging
-        Logger.getLogger("org").setLevel(Level.OFF);
-        Logger.getLogger("uy.com.geocom").setLevel(Level.OFF);
-        Logger.getLogger("uy.com.geocom").setLevel(Level.DEBUG);
-        //info for jobs logs
-        spark.log().debug("Testing in debug");
-        spark.log().info("Testing in info");
-
+        Logger.getRootLogger().setLevel(Level.ERROR);
+        //
+        logger.setLevel(Level.INFO);
+        logger.info("BasketAnalysisEngine ready!!!");
     }
 
     @Override
@@ -69,9 +63,9 @@ public class BasketAnalysisEngine implements InsightsEngine {
         params.put("confidence", String.valueOf(confidence));
 
         //Find Rules
-        BasketAnalysisCreator basketAnalysisCreator = findRules(purchaseItems, support, confidence);
+        BasketAnalysisBuilder basketAnalysisCreator = findRules(purchaseItems, support, confidence);
 
-        //Prepare BasketAnalysisCreator
+        //Prepare BasketAnalysisBuilder
         basketAnalysisCreator.setProductDataset(productDataset);
 
         //create BasketAnalysis
@@ -90,7 +84,7 @@ public class BasketAnalysisEngine implements InsightsEngine {
                 .as(Encoders.bean(Purchase.class));
         //Transform input datasets
         transformPurchaseDataset(purchaseDataset);
-        //Utils.describeDataSet(spark.log(), this.purchaseItems, "Purchase Items", 10);
+        Utils.describeDataSet(logger, this.purchaseItems, "Purchase Items", 10);
 
     }
 
@@ -101,16 +95,15 @@ public class BasketAnalysisEngine implements InsightsEngine {
                         count(PurchaseSchema.productId.name()).as(K_COLUMN));
     }
 
-    private BasketAnalysisCreator findRules(Dataset<Row> basketItems, double support, double confidence) {
+    private BasketAnalysisBuilder findRules(Dataset<Row> basketItems, double support, double confidence) {
 
-        spark.log().info("------------FPM Analysis started with min_support: " + support + " and min_confidence: " + confidence);
+        logger.info("------------FPM Analysis started with min_support: " + support + " and min_confidence: " + confidence);
 
         FPGrowthModel model = new FPGrowth()
                 .setItemsCol(ITEMS_COLUMN)
                 .setMinSupport(support)
                 .setMinConfidence(confidence)
                 .fit(basketItems);
-
 
         // Display frequent itemsets.
         Dataset<Row> freqItemsets = model.freqItemsets();
@@ -121,7 +114,11 @@ public class BasketAnalysisEngine implements InsightsEngine {
         // consequents as prediction
         //model.transform(basketItems).show(50);
         //
-        return BasketAnalysisCreator.builder()
+
+        logger.info("------------FPM Analysis found " + freqItemsets.count()
+                + " freqItemsets and "+associationRules.count()+" associationRules ");
+
+        return BasketAnalysisBuilder.builder()
                 .freqItemSets(freqItemsets)
                 .associationRules(associationRules)
                 .build();

@@ -1,10 +1,11 @@
 package uy.com.geocom.common;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.StructType;
-import org.slf4j.Logger;
 import uy.com.geocom.insights.model.output.AssociationRule;
 import uy.com.geocom.insights.model.output.FrequentItemSet;
 
@@ -32,24 +33,30 @@ public class Utils {
     public static void describeDataSet(Logger logger, Dataset dataset, String title, int rows) {
         //display schema of data
         logger.info("------------".concat(title + " (").concat(dataset.count() + " rows) ------------"));
-        dataset.printSchema();
-        dataset.show(rows);
+        if (logger.getLevel().equals(Level.INFO)) {
+            dataset.printSchema();
+            dataset.show(rows);
+        }
     }
 
     public static void printTypicalBaskets(Logger logger, List<FrequentItemSet> typicalBaskets) {
-        for (FrequentItemSet frequentItemSet : typicalBaskets) {
-            System.out.println(frequentItemSet.getRank() + " - " + frequentItemSet.getFreq()
-                    + " -> (" + frequentItemSet.getItems().length + ") " + Arrays.toString(frequentItemSet.getItems()));
+        if (logger.getLevel().equals(Level.INFO)) {
+            for (FrequentItemSet frequentItemSet : typicalBaskets) {
+                logger.info(frequentItemSet.getRank() + " - " + frequentItemSet.getFreq()
+                        + " -> (" + frequentItemSet.getItems().length + ") " + Arrays.toString(frequentItemSet.getItems()));
+            }
         }
     }
 
     public static void printAssociationRules(Logger logger, List<AssociationRule> rules) {
-        for (AssociationRule rule : rules) {
-            System.out.println(Arrays.toString(rule.getAntecedentItemIds())
-                    + " --> " + rule.getConsequentItemId()
-                    + " rank: " + rule.getRank()
-                    + " confidence: " + rule.getConfidence()
-                    + " relevance: " + rule.getRelevance());
+        if (logger.getLevel().equals(Level.INFO)) {
+            for (AssociationRule rule : rules) {
+                logger.info(Arrays.toString(rule.getAntecedentItemIds())
+                        + " --> " + rule.getConsequentItemId()
+                        + " rank: " + rule.getRank()
+                        + " confidence: " + rule.getConfidence()
+                        + " relevance: " + rule.getRelevance());
+            }
         }
     }
 }
