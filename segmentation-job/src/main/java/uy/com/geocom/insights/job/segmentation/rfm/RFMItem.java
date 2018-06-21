@@ -1,4 +1,4 @@
-package uy.com.geocom.rfm;
+package uy.com.geocom.insights.job.segmentation.rfm;
 
 import lombok.Data;
 import uy.com.geocom.insights.model.output.SegmentItem;

@@ -1,4 +1,4 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.segmentation;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;

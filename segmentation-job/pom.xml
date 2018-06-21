@@ -110,7 +110,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>uy.com.geocom.SegmentationEngine</mainClass>
+                            <mainClass>uy.com.geocom.insights.job.segmentation.SegmentationEngine</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

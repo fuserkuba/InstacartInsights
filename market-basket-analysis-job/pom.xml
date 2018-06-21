@@ -108,7 +108,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>uy.com.geocom.BasketAnalysisEngine</mainClass>
+                            <mainClass>uy.com.geocom.insights.job.basketanalysis.BasketAnalysisEngine</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

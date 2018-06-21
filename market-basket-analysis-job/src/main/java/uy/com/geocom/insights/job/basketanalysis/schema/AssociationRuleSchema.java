@@ -1,4 +1,4 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.basketanalysis.schema;
 
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;

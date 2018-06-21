@@ -1,11 +1,11 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.basketanalysis;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.sql.SparkSession;
 
-import uy.com.geocom.common.InsightsEngine;
-import uy.com.geocom.common.Utils;
+import uy.com.geocom.insights.job.common.InsightsEngine;
+import uy.com.geocom.insights.job.common.Utils;
 import uy.com.geocom.insights.model.output.BasketsAnalysis;
 import uy.com.geocom.insights.model.output.Insight;
 

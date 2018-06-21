@@ -1,4 +1,4 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.segmentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.ArrayUtils;
@@ -16,12 +16,12 @@ import org.apache.spark.ml.tuning.CrossValidator;
 import org.apache.spark.ml.tuning.CrossValidatorModel;
 import org.apache.spark.ml.tuning.ParamGridBuilder;
 import org.apache.spark.sql.*;
-import uy.com.geocom.common.BasketSchema;
-import uy.com.geocom.common.Utils;
+import uy.com.geocom.insights.job.common.BasketSchema;
+import uy.com.geocom.insights.job.common.Utils;
 import uy.com.geocom.insights.model.input.Basket;
 import uy.com.geocom.insights.model.output.Segmentation;
-import uy.com.geocom.rfm.DataTransformer4RFM;
-import uy.com.geocom.rfm.RFMSchema;
+import uy.com.geocom.insights.job.segmentation.rfm.DataTransformer4RFM;
+import uy.com.geocom.insights.job.segmentation.rfm.RFMSchema;
 
 import java.io.IOException;
 import java.io.OutputStream;

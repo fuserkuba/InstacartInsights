@@ -1,4 +1,4 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.basketanalysis;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,8 +7,9 @@ import org.apache.spark.sql.expressions.UserDefinedFunction;
 import org.apache.spark.sql.types.DataTypes;
 import scala.collection.JavaConversions;
 import scala.collection.mutable.WrappedArray;
-import uy.com.geocom.common.ProductSchema;
-import uy.com.geocom.common.Utils;
+import uy.com.geocom.insights.job.common.ProductSchema;
+import uy.com.geocom.insights.job.basketanalysis.schema.AssociationRuleSchema;
+import uy.com.geocom.insights.job.basketanalysis.schema.FreqItemSetsSchema;
 import uy.com.geocom.insights.model.input.Product;
 import uy.com.geocom.insights.model.output.AssociationRule;
 import uy.com.geocom.insights.model.output.BasketsAnalysis;

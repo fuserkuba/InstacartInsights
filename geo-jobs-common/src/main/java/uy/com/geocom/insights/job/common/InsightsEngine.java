@@ -1,4 +1,4 @@
-package uy.com.geocom.common;
+package uy.com.geocom.insights.job.common;
 
 import uy.com.geocom.insights.model.output.Insight;
 

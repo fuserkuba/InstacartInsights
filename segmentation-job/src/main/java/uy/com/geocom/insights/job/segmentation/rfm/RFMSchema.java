@@ -1,4 +1,4 @@
-package uy.com.geocom.rfm;
+package uy.com.geocom.insights.job.segmentation.rfm;
 
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;

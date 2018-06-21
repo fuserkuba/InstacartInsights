@@ -1,4 +1,4 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.basketanalysis;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -8,10 +8,10 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import uy.com.geocom.common.InsightsEngine;
-import uy.com.geocom.common.ProductSchema;
-import uy.com.geocom.common.PurchaseSchema;
-import uy.com.geocom.common.Utils;
+import uy.com.geocom.insights.job.common.InsightsEngine;
+import uy.com.geocom.insights.job.common.ProductSchema;
+import uy.com.geocom.insights.job.common.PurchaseSchema;
+import uy.com.geocom.insights.job.common.Utils;
 import uy.com.geocom.insights.model.input.Product;
 import uy.com.geocom.insights.model.input.Purchase;
 import uy.com.geocom.insights.model.output.Insight;

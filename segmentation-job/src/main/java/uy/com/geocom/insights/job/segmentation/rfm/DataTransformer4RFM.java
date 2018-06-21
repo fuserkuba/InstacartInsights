@@ -1,10 +1,9 @@
-package uy.com.geocom.rfm;
+package uy.com.geocom.insights.job.segmentation.rfm;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import uy.com.geocom.DataTransformer;
-import uy.com.geocom.common.BasketSchema;
-import uy.com.geocom.insights.model.input.Basket;
+import uy.com.geocom.insights.job.segmentation.DataTransformer;
+import uy.com.geocom.insights.job.common.BasketSchema;
 import uy.com.geocom.insights.model.output.SegmentItem;
 import uy.com.geocom.insights.model.output.StatisticMeasure;
 
