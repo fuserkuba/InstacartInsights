@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class FrequentItemSet {
-    protected LinkedHashSet<String> items;
+    protected String[] items;
     protected Long freq;
     protected Long rank;
 }

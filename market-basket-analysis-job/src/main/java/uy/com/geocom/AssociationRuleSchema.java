@@ -5,9 +5,9 @@ import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
 public class AssociationRuleSchema {
-    public static final StructField antecedent = DataTypes.createStructField("antecedent", DataTypes.StringType, true);
-    public static final StructField consequent = DataTypes.createStructField("consequent", DataTypes.StringType, true);
-    public static final StructField confidence = DataTypes.createStructField("confidence", DataTypes.StringType, true);
+    public static final StructField antecedent = DataTypes.createStructField("antecedent", DataTypes.createArrayType(DataTypes.StringType), true);
+    public static final StructField consequent = DataTypes.createStructField("consequent", DataTypes.createArrayType(DataTypes.StringType), true);
+    public static final StructField confidence = DataTypes.createStructField("confidence", DataTypes.DoubleType, true);
 
     public static final StructField antecedentItemIds = DataTypes.createStructField("antecedentItemIds", DataTypes.StringType, true);
     public static final StructField consequentItemId = DataTypes.createStructField("consequentItemId", DataTypes.StringType, true);

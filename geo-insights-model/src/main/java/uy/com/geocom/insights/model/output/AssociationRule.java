@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class AssociationRule {
 
-    protected LinkedHashSet<Long> antecedentItemIds;
+    protected String[] antecedentItemIds;
     protected String consequentItemId;
     protected Double confidence;
     //Combination of confidence with another context attribute. e.g. profit
