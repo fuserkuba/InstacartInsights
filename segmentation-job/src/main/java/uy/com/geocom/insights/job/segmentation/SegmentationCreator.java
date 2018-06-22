@@ -1,4 +1,4 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.segmentation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

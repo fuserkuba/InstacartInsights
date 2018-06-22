@@ -1,4 +1,4 @@
-package uy.com.geocom.common;
+package uy.com.geocom.insights.job.common;
 
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;

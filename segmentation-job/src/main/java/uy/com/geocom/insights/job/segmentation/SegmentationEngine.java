@@ -1,7 +1,8 @@
-package uy.com.geocom;
+package uy.com.geocom.insights.job.segmentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.log4j.Logger;
 import org.apache.spark.ml.Pipeline;
 import org.apache.spark.ml.PipelineModel;
 import org.apache.spark.ml.PipelineStage;
@@ -15,12 +16,12 @@ import org.apache.spark.ml.tuning.CrossValidator;
 import org.apache.spark.ml.tuning.CrossValidatorModel;
 import org.apache.spark.ml.tuning.ParamGridBuilder;
 import org.apache.spark.sql.*;
-import uy.com.geocom.common.BasketSchema;
-import uy.com.geocom.common.Utils;
+import uy.com.geocom.insights.job.common.BasketSchema;
+import uy.com.geocom.insights.job.common.Utils;
 import uy.com.geocom.insights.model.input.Basket;
 import uy.com.geocom.insights.model.output.Segmentation;
-import uy.com.geocom.rfm.DataTransformer4RFM;
-import uy.com.geocom.rfm.RFMSchema;
+import uy.com.geocom.insights.job.segmentation.rfm.DataTransformer4RFM;
+import uy.com.geocom.insights.job.segmentation.rfm.RFMSchema;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,6 +44,8 @@ public class SegmentationEngine {
     protected static SparkSession spark;
     protected static Map<String, String> params = new HashMap<String, String>();
 
+    protected static Logger logger;
+
     public static void main(String[] args) {
         if (args.length < 2) {
             System.err.println("Usage: SegmentationEngine <fileBaskets segmentationPath>");
@@ -50,7 +53,8 @@ public class SegmentationEngine {
         }
         spark = SparkSession.builder().appName("SegmentationEngine").getOrCreate();
         //only error logs
-        spark.sparkContext().setLogLevel("ERROR");
+        logger =Logger.getLogger(SegmentationEngine.class);
+        logger.info("Engine ready!!!");
         //ETL
         DataTransformer dataTransformer = extractDataSets(args);
         //Prepare segmentation
@@ -89,7 +93,7 @@ public class SegmentationEngine {
         Dataset<Basket> basketDataset = Utils.readDataSetFromFile(spark, basketsPath, BasketSchema.getSchema())
                 .as(Encoders.bean(Basket.class));
         //describe data sets
-        // Utils.describeDataSet(spark.log(), basketDataset, "Baskets", 10);
+       // Utils.describeDataSet(logger, basketDataset, "Baskets", 10);
         //Transform input datasets
         DataTransformer dataTransformer = new DataTransformer4RFM();
         dataTransformer.transformDataset(basketDataset);
@@ -99,7 +103,7 @@ public class SegmentationEngine {
 
     private static SegmentationCreator clusterDataset(Dataset<Row> items, String[] inputCols, int[] k_values) {
 
-        //Utils.describeDataSet(spark.log(), items, "Items for clustering", 10);
+       // Utils.describeDataSet(logger, items, "Items for clustering", 10);
 
         ArrayList<String> features = new ArrayList<String>(inputCols.length);
         for (String cols : inputCols) {
