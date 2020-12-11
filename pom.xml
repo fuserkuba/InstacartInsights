@@ -5,10 +5,10 @@
     <artifactId>geo-insights-pom</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>geo-insights-model</module>
+        <module>insights-model</module>
         <module>segmentation-job</module>
         <module>etl-job</module>
-        <module>geo-jobs-common</module>
+        <module>jobs-common</module>
         <module>data-extractor</module>
         <module>market-basket-analysis-job</module>
     </modules>
