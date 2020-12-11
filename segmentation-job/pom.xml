@@ -110,7 +110,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>uy.com.geocom.insights.job.segmentation.SegmentationEngine</mainClass>
+                            <mainClass>instacart.insights.job.segmentation.SegmentationEngine</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
